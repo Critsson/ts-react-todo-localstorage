@@ -1,0 +1,5 @@
+.todo_container {
+    display: flex;
+    gap: .5vw;
+    font-size: 1.3vw;
+}
