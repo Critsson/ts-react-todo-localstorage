@@ -42,7 +42,6 @@ form {
 }
 
 .todos_container {
-    border: .2vw solid grey;
     width: 50vw;
     margin-top: 1.6vw;
     display: flex;

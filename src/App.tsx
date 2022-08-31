@@ -2,34 +2,64 @@ import React from 'react';
 import Todo from "./components/Todo"
 import './styles/App.css';
 
+interface TodoObject {
+  id: number,
+  description: string
+}
+
 function App() {
 
   const [text, setText] = React.useState("")
   const [count, setCount] = React.useState(1)
-  const [listOfTodos, setListOfTodos] = React.useState<JSX.Element[]>([])
+  const [listOfTodos, setListOfTodos] = React.useState<TodoObject[]>([])
 
-  const submitForm = (e: React.FormEvent): void => {
-    const newArr: JSX.Element[] = [];
-    e.preventDefault();
+  const deleteTodo = (id: number): void => {
 
-    if (listOfTodos.length === 0) {
-      newArr.push(<Todo key={count} description={text} id={count} />)
-      setCount(count + 1)
-    } else if (listOfTodos.length > 0) {
-      for (let i = 0; i < listOfTodos.length; i++) {
-        newArr.push(listOfTodos[i])
-        if (i === listOfTodos.length - 1) {
-          newArr.push(<Todo key={count} description={text} id={count} />)
-          setCount(count + 1)
-        }
+    for (let i = 0; i < listOfTodos.length; i++) {
+
+      if (id === listOfTodos[i].id) {
+        let placeholder: TodoObject[] = listOfTodos.concat()
+        placeholder.splice(i, 1)
+        setListOfTodos(placeholder)
+        return
       }
     }
 
-    setListOfTodos(newArr)
+    console.error("No todo of that id exists")
+
+  }
+
+  const editTodo = (id: number, newDesc: string): void => {
+
+    for (let i = 0; i < listOfTodos.length; i++) {
+      if (id === listOfTodos[i].id) {
+        let placeholder: TodoObject[] = listOfTodos.concat()
+        placeholder[i].description = newDesc
+        setListOfTodos(placeholder)
+        return
+      }
+    }
+
+    console.error("No todo of that id exists")
+
+  }
+
+  const submitForm = (e: React.FormEvent): void => {
+
+    e.preventDefault()
+    let placeholder: TodoObject[] = listOfTodos.concat({ id: count, description: text })
+
+    setListOfTodos(placeholder)
+    setText("")
+    setCount(count + 1)
 
   }
 
   const updateText = (e: React.FormEvent<HTMLInputElement>): void => setText(e.currentTarget.value)
+
+  const listOfTodoElements: JSX.Element[] = listOfTodos.map((todo) => {
+    return <Todo id={todo.id} description={todo.description} deleteTodo={deleteTodo} editTodo={editTodo} />
+  })
 
   return (
     <div className="container">
@@ -41,7 +71,7 @@ function App() {
         <button className="submit_button" type="submit">Submit</button>
       </form>
       <div className="todos_container">
-        {listOfTodos}
+        {listOfTodoElements}
       </div>
     </div>
   );
